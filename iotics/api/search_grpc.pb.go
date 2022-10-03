@@ -28,8 +28,6 @@ type SearchAPIClient interface {
 	SynchronousSearch(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (SearchAPI_SynchronousSearchClient, error)
 	// Receive all search responses associated to a set of Search request for a given client application ID.
 	ReceiveAllSearchResponses(ctx context.Context, in *SubscriptionHeaders, opts ...grpc.CallOption) (SearchAPI_ReceiveAllSearchResponsesClient, error)
-	// Run an advanced (filter) search request on a user timeout and return formatted results.
-	AdvancedSearch(ctx context.Context, in *AdvancedSearchRequest, opts ...grpc.CallOption) (SearchAPI_AdvancedSearchClient, error)
 }
 
 type searchAPIClient struct {
@@ -113,38 +111,6 @@ func (x *searchAPIReceiveAllSearchResponsesClient) Recv() (*SearchResponse, erro
 	return m, nil
 }
 
-func (c *searchAPIClient) AdvancedSearch(ctx context.Context, in *AdvancedSearchRequest, opts ...grpc.CallOption) (SearchAPI_AdvancedSearchClient, error) {
-	stream, err := c.cc.NewStream(ctx, &SearchAPI_ServiceDesc.Streams[2], "/iotics.api.SearchAPI/AdvancedSearch", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &searchAPIAdvancedSearchClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type SearchAPI_AdvancedSearchClient interface {
-	Recv() (*SearchResponse, error)
-	grpc.ClientStream
-}
-
-type searchAPIAdvancedSearchClient struct {
-	grpc.ClientStream
-}
-
-func (x *searchAPIAdvancedSearchClient) Recv() (*SearchResponse, error) {
-	m := new(SearchResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 // SearchAPIServer is the server API for SearchAPI service.
 // All implementations should embed UnimplementedSearchAPIServer
 // for forward compatibility
@@ -155,8 +121,6 @@ type SearchAPIServer interface {
 	SynchronousSearch(*SearchRequest, SearchAPI_SynchronousSearchServer) error
 	// Receive all search responses associated to a set of Search request for a given client application ID.
 	ReceiveAllSearchResponses(*SubscriptionHeaders, SearchAPI_ReceiveAllSearchResponsesServer) error
-	// Run an advanced (filter) search request on a user timeout and return formatted results.
-	AdvancedSearch(*AdvancedSearchRequest, SearchAPI_AdvancedSearchServer) error
 }
 
 // UnimplementedSearchAPIServer should be embedded to have forward compatible implementations.
@@ -171,9 +135,6 @@ func (UnimplementedSearchAPIServer) SynchronousSearch(*SearchRequest, SearchAPI_
 }
 func (UnimplementedSearchAPIServer) ReceiveAllSearchResponses(*SubscriptionHeaders, SearchAPI_ReceiveAllSearchResponsesServer) error {
 	return status.Errorf(codes.Unimplemented, "method ReceiveAllSearchResponses not implemented")
-}
-func (UnimplementedSearchAPIServer) AdvancedSearch(*AdvancedSearchRequest, SearchAPI_AdvancedSearchServer) error {
-	return status.Errorf(codes.Unimplemented, "method AdvancedSearch not implemented")
 }
 
 // UnsafeSearchAPIServer may be embedded to opt out of forward compatibility for this service.
@@ -247,27 +208,6 @@ func (x *searchAPIReceiveAllSearchResponsesServer) Send(m *SearchResponse) error
 	return x.ServerStream.SendMsg(m)
 }
 
-func _SearchAPI_AdvancedSearch_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(AdvancedSearchRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(SearchAPIServer).AdvancedSearch(m, &searchAPIAdvancedSearchServer{stream})
-}
-
-type SearchAPI_AdvancedSearchServer interface {
-	Send(*SearchResponse) error
-	grpc.ServerStream
-}
-
-type searchAPIAdvancedSearchServer struct {
-	grpc.ServerStream
-}
-
-func (x *searchAPIAdvancedSearchServer) Send(m *SearchResponse) error {
-	return x.ServerStream.SendMsg(m)
-}
-
 // SearchAPI_ServiceDesc is the grpc.ServiceDesc for SearchAPI service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -289,11 +229,6 @@ var SearchAPI_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "ReceiveAllSearchResponses",
 			Handler:       _SearchAPI_ReceiveAllSearchResponses_Handler,
-			ServerStreams: true,
-		},
-		{
-			StreamName:    "AdvancedSearch",
-			Handler:       _SearchAPI_AdvancedSearch_Handler,
 			ServerStreams: true,
 		},
 	},
