@@ -227,7 +227,7 @@ func (x *SparqlQueryRequest) GetPayload() *SparqlQueryRequest_Payload {
 
 // SparqlQueryResponse is a part of a result for a SPARQL query request. Multiple chunks form a complete result. Related
 // chunks can be identified by a combination of:
-// - The hostId
+// - The host ID (unset for local results)
 // - Client reference (in headers, set by caller)
 // - Chunk sequence number
 type SparqlQueryResponse struct {
@@ -520,13 +520,13 @@ type SparqlQueryResponse_Payload struct {
 
 	// Result host identifier. Indicates from which host this result chunk came from. For a local result, this field
 	// will be unset.
-	HostId string `protobuf:"bytes,1,opt,name=hostId,proto3" json:"hostId,omitempty"`
+	RemoteHostId *HostID `protobuf:"bytes,1,opt,name=remoteHostId,proto3" json:"remoteHostId,omitempty"`
 	// Position of a chunk in result from a given host (and request). The first chunk has a sequence number of 0.
 	SeqNum uint64 `protobuf:"varint,2,opt,name=seqNum,proto3" json:"seqNum,omitempty"`
 	// Indicates whether this is the last chunk from a given host, for a specific request. Results for different
 	// requests can be identified by setting a unique clientRef in the request headers.
 	Last bool `protobuf:"varint,3,opt,name=last,proto3" json:"last,omitempty"`
-	// Result error status (only applicable to local results). If set, this will
+	// Result error status (only applicable to local results, i.e. when remoteHostId is unset). If set, this will
 	// indicate a problem with running the query (e.g. invalid syntax or content type) as opposed to a more general
 	// issue (in which case the standard gRPC error mechanism will be used and the stream terminated).
 	Status *status.Status `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
@@ -570,11 +570,11 @@ func (*SparqlQueryResponse_Payload) Descriptor() ([]byte, []int) {
 	return file_iotics_api_meta_proto_rawDescGZIP(), []int{2, 0}
 }
 
-func (x *SparqlQueryResponse_Payload) GetHostId() string {
+func (x *SparqlQueryResponse_Payload) GetRemoteHostId() *HostID {
 	if x != nil {
-		return x.HostId
+		return x.RemoteHostId
 	}
-	return ""
+	return nil
 }
 
 func (x *SparqlQueryResponse_Payload) GetSeqNum() uint64 {
@@ -705,7 +705,7 @@ var file_iotics_api_meta_proto_rawDesc = []byte{
 	0x6c, 0x74, 0x54, 0x79, 0x70, 0x65, 0x52, 0x11, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x43, 0x6f,
 	0x6e, 0x74, 0x65, 0x6e, 0x74, 0x54, 0x79, 0x70, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x71, 0x75, 0x65,
 	0x72, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x71, 0x75, 0x65, 0x72, 0x79, 0x22,
-	0xe5, 0x02, 0x0a, 0x13, 0x53, 0x70, 0x61, 0x72, 0x71, 0x6c, 0x51, 0x75, 0x65, 0x72, 0x79, 0x52,
+	0x85, 0x03, 0x0a, 0x13, 0x53, 0x70, 0x61, 0x72, 0x71, 0x6c, 0x51, 0x75, 0x65, 0x72, 0x79, 0x52,
 	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2d, 0x0a, 0x07, 0x68, 0x65, 0x61, 0x64, 0x65,
 	0x72, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x69, 0x6f, 0x74, 0x69, 0x63,
 	0x73, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x48, 0x65, 0x61, 0x64, 0x65, 0x72, 0x73, 0x52, 0x07, 0x68,
@@ -713,9 +713,11 @@ var file_iotics_api_meta_proto_rawDesc = []byte{
 	0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x27, 0x2e, 0x69, 0x6f, 0x74, 0x69, 0x63, 0x73,
 	0x2e, 0x61, 0x70, 0x69, 0x2e, 0x53, 0x70, 0x61, 0x72, 0x71, 0x6c, 0x51, 0x75, 0x65, 0x72, 0x79,
 	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x2e, 0x50, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64,
-	0x52, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x1a, 0xdb, 0x01, 0x0a, 0x07, 0x50, 0x61,
-	0x79, 0x6c, 0x6f, 0x61, 0x64, 0x12, 0x16, 0x0a, 0x06, 0x68, 0x6f, 0x73, 0x74, 0x49, 0x64, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x68, 0x6f, 0x73, 0x74, 0x49, 0x64, 0x12, 0x16, 0x0a,
+	0x52, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x1a, 0xfb, 0x01, 0x0a, 0x07, 0x50, 0x61,
+	0x79, 0x6c, 0x6f, 0x61, 0x64, 0x12, 0x36, 0x0a, 0x0c, 0x72, 0x65, 0x6d, 0x6f, 0x74, 0x65, 0x48,
+	0x6f, 0x73, 0x74, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x69, 0x6f,
+	0x74, 0x69, 0x63, 0x73, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x48, 0x6f, 0x73, 0x74, 0x49, 0x44, 0x52,
+	0x0c, 0x72, 0x65, 0x6d, 0x6f, 0x74, 0x65, 0x48, 0x6f, 0x73, 0x74, 0x49, 0x64, 0x12, 0x16, 0x0a,
 	0x06, 0x73, 0x65, 0x71, 0x4e, 0x75, 0x6d, 0x18, 0x02, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x73,
 	0x65, 0x71, 0x4e, 0x75, 0x6d, 0x12, 0x12, 0x0a, 0x04, 0x6c, 0x61, 0x73, 0x74, 0x18, 0x03, 0x20,
 	0x01, 0x28, 0x08, 0x52, 0x04, 0x6c, 0x61, 0x73, 0x74, 0x12, 0x2a, 0x0a, 0x06, 0x73, 0x74, 0x61,
@@ -804,7 +806,8 @@ var file_iotics_api_meta_proto_goTypes = []interface{}{
 	(*SparqlUpdateRequest_Payload)(nil), // 9: iotics.api.SparqlUpdateRequest.Payload
 	(*Headers)(nil),                     // 10: iotics.api.Headers
 	(Scope)(0),                          // 11: iotics.api.Scope
-	(*status.Status)(nil),               // 12: google.rpc.Status
+	(*HostID)(nil),                      // 12: iotics.api.HostID
+	(*status.Status)(nil),               // 13: google.rpc.Status
 }
 var file_iotics_api_meta_proto_depIdxs = []int32{
 	10, // 0: iotics.api.ExplorerRequest.headers:type_name -> iotics.api.Headers
@@ -820,19 +823,20 @@ var file_iotics_api_meta_proto_depIdxs = []int32{
 	10, // 10: iotics.api.SparqlUpdateResponse.headers:type_name -> iotics.api.Headers
 	0,  // 11: iotics.api.ExplorerRequest.Payload.resultContentType:type_name -> iotics.api.SparqlResultType
 	0,  // 12: iotics.api.SparqlQueryRequest.Payload.resultContentType:type_name -> iotics.api.SparqlResultType
-	12, // 13: iotics.api.SparqlQueryResponse.Payload.status:type_name -> google.rpc.Status
-	0,  // 14: iotics.api.SparqlQueryResponse.Payload.contentType:type_name -> iotics.api.SparqlResultType
-	2,  // 15: iotics.api.MetaAPI.SparqlQuery:input_type -> iotics.api.SparqlQueryRequest
-	4,  // 16: iotics.api.MetaAPI.SparqlUpdate:input_type -> iotics.api.SparqlUpdateRequest
-	1,  // 17: iotics.api.MetaAPI.ExplorerQuery:input_type -> iotics.api.ExplorerRequest
-	3,  // 18: iotics.api.MetaAPI.SparqlQuery:output_type -> iotics.api.SparqlQueryResponse
-	5,  // 19: iotics.api.MetaAPI.SparqlUpdate:output_type -> iotics.api.SparqlUpdateResponse
-	3,  // 20: iotics.api.MetaAPI.ExplorerQuery:output_type -> iotics.api.SparqlQueryResponse
-	18, // [18:21] is the sub-list for method output_type
-	15, // [15:18] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	12, // 13: iotics.api.SparqlQueryResponse.Payload.remoteHostId:type_name -> iotics.api.HostID
+	13, // 14: iotics.api.SparqlQueryResponse.Payload.status:type_name -> google.rpc.Status
+	0,  // 15: iotics.api.SparqlQueryResponse.Payload.contentType:type_name -> iotics.api.SparqlResultType
+	2,  // 16: iotics.api.MetaAPI.SparqlQuery:input_type -> iotics.api.SparqlQueryRequest
+	4,  // 17: iotics.api.MetaAPI.SparqlUpdate:input_type -> iotics.api.SparqlUpdateRequest
+	1,  // 18: iotics.api.MetaAPI.ExplorerQuery:input_type -> iotics.api.ExplorerRequest
+	3,  // 19: iotics.api.MetaAPI.SparqlQuery:output_type -> iotics.api.SparqlQueryResponse
+	5,  // 20: iotics.api.MetaAPI.SparqlUpdate:output_type -> iotics.api.SparqlUpdateResponse
+	3,  // 21: iotics.api.MetaAPI.ExplorerQuery:output_type -> iotics.api.SparqlQueryResponse
+	19, // [19:22] is the sub-list for method output_type
+	16, // [16:19] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_iotics_api_meta_proto_init() }
