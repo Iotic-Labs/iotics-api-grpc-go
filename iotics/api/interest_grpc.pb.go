@@ -26,12 +26,6 @@ type InterestAPIClient interface {
 	FetchInterests(ctx context.Context, in *FetchInterestRequest, opts ...grpc.CallOption) (InterestAPI_FetchInterestsClient, error)
 	// Fetch last data shared on this interest. (local and remote)
 	FetchLastStored(ctx context.Context, in *FetchLastStoredRequest, opts ...grpc.CallOption) (*FetchInterestResponse, error)
-	// List all interests associated to a given follower twin (Not implemented yet).
-	ListAllInterests(ctx context.Context, in *ListAllInterestsRequest, opts ...grpc.CallOption) (*ListAllInterestsResponse, error)
-	// Create an interest between a follower twin and a followed feed. (Not implemented yet).
-	CreateInterest(ctx context.Context, in *CreateInterestRequest, opts ...grpc.CallOption) (*CreateInterestResponse, error)
-	// Delete an existing interest. (Not implemented yet).
-	DeleteInterest(ctx context.Context, in *DeleteInterestRequest, opts ...grpc.CallOption) (*DeleteInterestResponse, error)
 	// Send a message to an input. (local and remote)
 	SendInputMessage(ctx context.Context, in *SendInputMessageRequest, opts ...grpc.CallOption) (*SendInputMessageResponse, error)
 }
@@ -85,33 +79,6 @@ func (c *interestAPIClient) FetchLastStored(ctx context.Context, in *FetchLastSt
 	return out, nil
 }
 
-func (c *interestAPIClient) ListAllInterests(ctx context.Context, in *ListAllInterestsRequest, opts ...grpc.CallOption) (*ListAllInterestsResponse, error) {
-	out := new(ListAllInterestsResponse)
-	err := c.cc.Invoke(ctx, "/iotics.api.InterestAPI/ListAllInterests", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *interestAPIClient) CreateInterest(ctx context.Context, in *CreateInterestRequest, opts ...grpc.CallOption) (*CreateInterestResponse, error) {
-	out := new(CreateInterestResponse)
-	err := c.cc.Invoke(ctx, "/iotics.api.InterestAPI/CreateInterest", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *interestAPIClient) DeleteInterest(ctx context.Context, in *DeleteInterestRequest, opts ...grpc.CallOption) (*DeleteInterestResponse, error) {
-	out := new(DeleteInterestResponse)
-	err := c.cc.Invoke(ctx, "/iotics.api.InterestAPI/DeleteInterest", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *interestAPIClient) SendInputMessage(ctx context.Context, in *SendInputMessageRequest, opts ...grpc.CallOption) (*SendInputMessageResponse, error) {
 	out := new(SendInputMessageResponse)
 	err := c.cc.Invoke(ctx, "/iotics.api.InterestAPI/SendInputMessage", in, out, opts...)
@@ -129,12 +96,6 @@ type InterestAPIServer interface {
 	FetchInterests(*FetchInterestRequest, InterestAPI_FetchInterestsServer) error
 	// Fetch last data shared on this interest. (local and remote)
 	FetchLastStored(context.Context, *FetchLastStoredRequest) (*FetchInterestResponse, error)
-	// List all interests associated to a given follower twin (Not implemented yet).
-	ListAllInterests(context.Context, *ListAllInterestsRequest) (*ListAllInterestsResponse, error)
-	// Create an interest between a follower twin and a followed feed. (Not implemented yet).
-	CreateInterest(context.Context, *CreateInterestRequest) (*CreateInterestResponse, error)
-	// Delete an existing interest. (Not implemented yet).
-	DeleteInterest(context.Context, *DeleteInterestRequest) (*DeleteInterestResponse, error)
 	// Send a message to an input. (local and remote)
 	SendInputMessage(context.Context, *SendInputMessageRequest) (*SendInputMessageResponse, error)
 }
@@ -148,15 +109,6 @@ func (UnimplementedInterestAPIServer) FetchInterests(*FetchInterestRequest, Inte
 }
 func (UnimplementedInterestAPIServer) FetchLastStored(context.Context, *FetchLastStoredRequest) (*FetchInterestResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FetchLastStored not implemented")
-}
-func (UnimplementedInterestAPIServer) ListAllInterests(context.Context, *ListAllInterestsRequest) (*ListAllInterestsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListAllInterests not implemented")
-}
-func (UnimplementedInterestAPIServer) CreateInterest(context.Context, *CreateInterestRequest) (*CreateInterestResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateInterest not implemented")
-}
-func (UnimplementedInterestAPIServer) DeleteInterest(context.Context, *DeleteInterestRequest) (*DeleteInterestResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteInterest not implemented")
 }
 func (UnimplementedInterestAPIServer) SendInputMessage(context.Context, *SendInputMessageRequest) (*SendInputMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendInputMessage not implemented")
@@ -212,60 +164,6 @@ func _InterestAPI_FetchLastStored_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InterestAPI_ListAllInterests_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListAllInterestsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(InterestAPIServer).ListAllInterests(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/iotics.api.InterestAPI/ListAllInterests",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InterestAPIServer).ListAllInterests(ctx, req.(*ListAllInterestsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _InterestAPI_CreateInterest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateInterestRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(InterestAPIServer).CreateInterest(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/iotics.api.InterestAPI/CreateInterest",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InterestAPIServer).CreateInterest(ctx, req.(*CreateInterestRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _InterestAPI_DeleteInterest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteInterestRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(InterestAPIServer).DeleteInterest(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/iotics.api.InterestAPI/DeleteInterest",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InterestAPIServer).DeleteInterest(ctx, req.(*DeleteInterestRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _InterestAPI_SendInputMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SendInputMessageRequest)
 	if err := dec(in); err != nil {
@@ -294,18 +192,6 @@ var InterestAPI_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FetchLastStored",
 			Handler:    _InterestAPI_FetchLastStored_Handler,
-		},
-		{
-			MethodName: "ListAllInterests",
-			Handler:    _InterestAPI_ListAllInterests_Handler,
-		},
-		{
-			MethodName: "CreateInterest",
-			Handler:    _InterestAPI_CreateInterest_Handler,
-		},
-		{
-			MethodName: "DeleteInterest",
-			Handler:    _InterestAPI_DeleteInterest_Handler,
 		},
 		{
 			MethodName: "SendInputMessage",
