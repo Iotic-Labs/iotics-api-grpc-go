@@ -947,7 +947,7 @@ type CreateFeedRequest_Arguments struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Identifier of the twin owning this feed
+	// ID of the twin owning this feed
 	TwinId *TwinID `protobuf:"bytes,1,opt,name=twinId,proto3" json:"twinId,omitempty"`
 }
 
@@ -1407,7 +1407,7 @@ type ListAllFeedsRequest_Arguments struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Identifier of the twin owning this feed
+	// ID of the twin owning this feed
 	TwinId *TwinID `protobuf:"bytes,1,opt,name=twinId,proto3" json:"twinId,omitempty"`
 }
 
