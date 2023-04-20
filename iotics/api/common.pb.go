@@ -1170,7 +1170,7 @@ func (x *FeedData) GetData() []byte {
 	return nil
 }
 
-// PropertyUpdate describes the update of a resources underlying properties.
+// PropertyUpdate describes the update of resource's underlying properties.
 // Can be used to add, replace, or delete properties. The order of operations is:
 // clearedAll (if True), deleted, deletedByKey, added.
 // Note that internal properties (such as location) cannot be modified here.
