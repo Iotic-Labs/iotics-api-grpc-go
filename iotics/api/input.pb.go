@@ -215,11 +215,11 @@ type CreateInputRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// CreateInputResponse headers
+	// CreateInputRequest headers
 	Headers *Headers `protobuf:"bytes,1,opt,name=headers,proto3" json:"headers,omitempty"`
 	// CreateInputRequest arguments
 	Args *CreateInputRequest_Arguments `protobuf:"bytes,2,opt,name=args,proto3" json:"args,omitempty"`
-	// CreateInputResponse payload
+	// CreateInputRequest payload
 	Payload *CreateInputRequest_Payload `protobuf:"bytes,3,opt,name=payload,proto3" json:"payload,omitempty"`
 }
 
