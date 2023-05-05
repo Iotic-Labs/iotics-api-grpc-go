@@ -28,6 +28,10 @@ type InputAPIClient interface {
 	DescribeInput(ctx context.Context, in *DescribeInputRequest, opts ...grpc.CallOption) (*DescribeInputResponse, error)
 	// Receives input messages for a specific input.
 	ReceiveInputMessages(ctx context.Context, in *ReceiveInputMessageRequest, opts ...grpc.CallOption) (InputAPI_ReceiveInputMessagesClient, error)
+	// Creates an input owned by a twin. (Idempotent)
+	CreateInput(ctx context.Context, in *CreateInputRequest, opts ...grpc.CallOption) (*CreateInputResponse, error)
+	// Updates attributes of an input, including its metadata.
+	UpdateInput(ctx context.Context, in *UpdateInputRequest, opts ...grpc.CallOption) (*UpdateInputResponse, error)
 }
 
 type inputAPIClient struct {
@@ -88,6 +92,24 @@ func (x *inputAPIReceiveInputMessagesClient) Recv() (*ReceiveInputMessageRespons
 	return m, nil
 }
 
+func (c *inputAPIClient) CreateInput(ctx context.Context, in *CreateInputRequest, opts ...grpc.CallOption) (*CreateInputResponse, error) {
+	out := new(CreateInputResponse)
+	err := c.cc.Invoke(ctx, "/iotics.api.InputAPI/CreateInput", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *inputAPIClient) UpdateInput(ctx context.Context, in *UpdateInputRequest, opts ...grpc.CallOption) (*UpdateInputResponse, error) {
+	out := new(UpdateInputResponse)
+	err := c.cc.Invoke(ctx, "/iotics.api.InputAPI/UpdateInput", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InputAPIServer is the server API for InputAPI service.
 // All implementations should embed UnimplementedInputAPIServer
 // for forward compatibility
@@ -98,6 +120,10 @@ type InputAPIServer interface {
 	DescribeInput(context.Context, *DescribeInputRequest) (*DescribeInputResponse, error)
 	// Receives input messages for a specific input.
 	ReceiveInputMessages(*ReceiveInputMessageRequest, InputAPI_ReceiveInputMessagesServer) error
+	// Creates an input owned by a twin. (Idempotent)
+	CreateInput(context.Context, *CreateInputRequest) (*CreateInputResponse, error)
+	// Updates attributes of an input, including its metadata.
+	UpdateInput(context.Context, *UpdateInputRequest) (*UpdateInputResponse, error)
 }
 
 // UnimplementedInputAPIServer should be embedded to have forward compatible implementations.
@@ -112,6 +138,12 @@ func (UnimplementedInputAPIServer) DescribeInput(context.Context, *DescribeInput
 }
 func (UnimplementedInputAPIServer) ReceiveInputMessages(*ReceiveInputMessageRequest, InputAPI_ReceiveInputMessagesServer) error {
 	return status.Errorf(codes.Unimplemented, "method ReceiveInputMessages not implemented")
+}
+func (UnimplementedInputAPIServer) CreateInput(context.Context, *CreateInputRequest) (*CreateInputResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateInput not implemented")
+}
+func (UnimplementedInputAPIServer) UpdateInput(context.Context, *UpdateInputRequest) (*UpdateInputResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateInput not implemented")
 }
 
 // UnsafeInputAPIServer may be embedded to opt out of forward compatibility for this service.
@@ -182,6 +214,42 @@ func (x *inputAPIReceiveInputMessagesServer) Send(m *ReceiveInputMessageResponse
 	return x.ServerStream.SendMsg(m)
 }
 
+func _InputAPI_CreateInput_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateInputRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InputAPIServer).CreateInput(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/iotics.api.InputAPI/CreateInput",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InputAPIServer).CreateInput(ctx, req.(*CreateInputRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InputAPI_UpdateInput_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateInputRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InputAPIServer).UpdateInput(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/iotics.api.InputAPI/UpdateInput",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InputAPIServer).UpdateInput(ctx, req.(*UpdateInputRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InputAPI_ServiceDesc is the grpc.ServiceDesc for InputAPI service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -196,6 +264,14 @@ var InputAPI_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DescribeInput",
 			Handler:    _InputAPI_DescribeInput_Handler,
+		},
+		{
+			MethodName: "CreateInput",
+			Handler:    _InputAPI_CreateInput_Handler,
+		},
+		{
+			MethodName: "UpdateInput",
+			Handler:    _InputAPI_UpdateInput_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
