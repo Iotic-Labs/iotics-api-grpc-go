@@ -1170,7 +1170,7 @@ func (x *FeedData) GetData() []byte {
 	return nil
 }
 
-// PropertyUpdate describes the update of a twin properties.
+// PropertyUpdate describes the update of resource's underlying properties.
 // Can be used to add, replace, or delete properties. The order of operations is:
 // clearedAll (if True), deleted, deletedByKey, added.
 // Note that internal properties (such as location) cannot be modified here.
@@ -1179,7 +1179,7 @@ type PropertyUpdate struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Delete all properties currently set on the twin.
+	// Delete all properties currently set on the resource.
 	ClearedAll bool `protobuf:"varint,1,opt,name=clearedAll,proto3" json:"clearedAll,omitempty"`
 	// Delete specific exact properties (by key and value). This operation is ignored if clearAll is True.
 	Deleted []*Property `protobuf:"bytes,2,rep,name=deleted,proto3" json:"deleted,omitempty"`
