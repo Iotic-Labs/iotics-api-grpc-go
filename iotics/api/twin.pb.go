@@ -761,7 +761,7 @@ type UpdateTwinResponse struct {
 
 	// UpdateTwinResponse headers
 	Headers *Headers `protobuf:"bytes,1,opt,name=headers,proto3" json:"headers,omitempty"`
-	//UpdateTwinResponse payload
+	// UpdateTwinResponse payload
 	Payload *UpdateTwinResponse_Payload `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload,omitempty"`
 }
 

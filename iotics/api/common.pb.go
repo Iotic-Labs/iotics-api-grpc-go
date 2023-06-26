@@ -518,6 +518,7 @@ type Property struct {
 	// The value of the property. Only one of these fields can be set
 	//
 	// Types that are assignable to Value:
+	//
 	//	*Property_LiteralValue
 	//	*Property_LangLiteralValue
 	//	*Property_StringLiteralValue

@@ -408,7 +408,7 @@ type UpdateFeedResponse struct {
 
 	// UpdateFeedResponse headers
 	Headers *Headers `protobuf:"bytes,1,opt,name=headers,proto3" json:"headers,omitempty"`
-	//UpdateFeedResponse payload
+	// UpdateFeedResponse payload
 	Payload *UpdateFeedResponse_Payload `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload,omitempty"`
 }
 

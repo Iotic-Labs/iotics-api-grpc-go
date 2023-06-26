@@ -23,16 +23,16 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MetaAPIClient interface {
 	// SparqlQuery performs a SPARQL 1.1 query and returns one or more results, each as a sequence of chunks. Note that:
-	// - Chunks for a particular result will arrive in-order though they might be interleaved with chunks from other
-	//   results (when performing a non-local query). See scope parameter in SparqlQueryRequest;
-	// - The call will only complete once the (specified or host default) request timeout has been reached. The client can
-	//   choose to end the stream early once they have received enough results. (E.g. in the case of Scope.LOCAL this
-	//   would be after the one and only sequence of chunks has been received.). (local and remote)
+	//   - Chunks for a particular result will arrive in-order though they might be interleaved with chunks from other
+	//     results (when performing a non-local query). See scope parameter in SparqlQueryRequest;
+	//   - The call will only complete once the (specified or host default) request timeout has been reached. The client can
+	//     choose to end the stream early once they have received enough results. (E.g. in the case of Scope.LOCAL this
+	//     would be after the one and only sequence of chunks has been received.). (local and remote)
 	SparqlQuery(ctx context.Context, in *SparqlQueryRequest, opts ...grpc.CallOption) (MetaAPI_SparqlQueryClient, error)
 	// SparqlUpdate performs a SPARQL 1.1 update. When performing an update, the update query must contain a reference to
 	// one of the following graph IRIs:
-	// 1. http://data.iotics.com/graph#custom-public (aka custom public graph) - All metadata written to this graph will be
-	//    visible during SPARQL queries both with local & global scope (and thus, the Iotics network).
+	//  1. http://data.iotics.com/graph#custom-public (aka custom public graph) - All metadata written to this graph will be
+	//     visible during SPARQL queries both with local & global scope (and thus, the Iotics network).
 	SparqlUpdate(ctx context.Context, in *SparqlUpdateRequest, opts ...grpc.CallOption) (*SparqlUpdateResponse, error)
 	// ExplorerQuery - Deprecated - use SparqlQuery instead.
 	ExplorerQuery(ctx context.Context, in *ExplorerRequest, opts ...grpc.CallOption) (MetaAPI_ExplorerQueryClient, error)
@@ -124,16 +124,16 @@ func (x *metaAPIExplorerQueryClient) Recv() (*SparqlQueryResponse, error) {
 // for forward compatibility
 type MetaAPIServer interface {
 	// SparqlQuery performs a SPARQL 1.1 query and returns one or more results, each as a sequence of chunks. Note that:
-	// - Chunks for a particular result will arrive in-order though they might be interleaved with chunks from other
-	//   results (when performing a non-local query). See scope parameter in SparqlQueryRequest;
-	// - The call will only complete once the (specified or host default) request timeout has been reached. The client can
-	//   choose to end the stream early once they have received enough results. (E.g. in the case of Scope.LOCAL this
-	//   would be after the one and only sequence of chunks has been received.). (local and remote)
+	//   - Chunks for a particular result will arrive in-order though they might be interleaved with chunks from other
+	//     results (when performing a non-local query). See scope parameter in SparqlQueryRequest;
+	//   - The call will only complete once the (specified or host default) request timeout has been reached. The client can
+	//     choose to end the stream early once they have received enough results. (E.g. in the case of Scope.LOCAL this
+	//     would be after the one and only sequence of chunks has been received.). (local and remote)
 	SparqlQuery(*SparqlQueryRequest, MetaAPI_SparqlQueryServer) error
 	// SparqlUpdate performs a SPARQL 1.1 update. When performing an update, the update query must contain a reference to
 	// one of the following graph IRIs:
-	// 1. http://data.iotics.com/graph#custom-public (aka custom public graph) - All metadata written to this graph will be
-	//    visible during SPARQL queries both with local & global scope (and thus, the Iotics network).
+	//  1. http://data.iotics.com/graph#custom-public (aka custom public graph) - All metadata written to this graph will be
+	//     visible during SPARQL queries both with local & global scope (and thus, the Iotics network).
 	SparqlUpdate(context.Context, *SparqlUpdateRequest) (*SparqlUpdateResponse, error)
 	// ExplorerQuery - Deprecated - use SparqlQuery instead.
 	ExplorerQuery(*ExplorerRequest, MetaAPI_ExplorerQueryServer) error
