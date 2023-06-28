@@ -26,63 +26,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// DEPRECATED
-// This field will be temporarily maintained alongside the metadata network allowlist for backwards compatibility.
-// Going forward, the metadata network allowlist should be used instead.
-//
-// Read behaviour:
-// PRIVATE - the twin is only visible in a LOCAL scope or according to the metadata network allowlist
-// PUBLIC - the twin is visible in any scope. (ie. metadata network allowlist [ALLOW_ALL])
-//
-// Write behaviour:
-// PRIVATE - set the metadata network allowlist to ALLOW_NONE: the twin is only visible in a LOCAL scope
-// PUBLIC - set the metadata network allowlist to ALLOW_ALL: the twin is visible in any scope.
-type Visibility int32
-
-const (
-	Visibility_PRIVATE Visibility = 0
-	Visibility_PUBLIC  Visibility = 1
-)
-
-// Enum value maps for Visibility.
-var (
-	Visibility_name = map[int32]string{
-		0: "PRIVATE",
-		1: "PUBLIC",
-	}
-	Visibility_value = map[string]int32{
-		"PRIVATE": 0,
-		"PUBLIC":  1,
-	}
-)
-
-func (x Visibility) Enum() *Visibility {
-	p := new(Visibility)
-	*p = x
-	return p
-}
-
-func (x Visibility) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (Visibility) Descriptor() protoreflect.EnumDescriptor {
-	return file_iotics_api_common_proto_enumTypes[0].Descriptor()
-}
-
-func (Visibility) Type() protoreflect.EnumType {
-	return &file_iotics_api_common_proto_enumTypes[0]
-}
-
-func (x Visibility) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use Visibility.Descriptor instead.
-func (Visibility) EnumDescriptor() ([]byte, []int) {
-	return file_iotics_api_common_proto_rawDescGZIP(), []int{0}
-}
-
 // Scope is a request parameter used to apply a scope to a given request.
 // GLOBAL - go over the network/target the public Twin
 // LOCAL - restrain the request to the local host
@@ -116,11 +59,11 @@ func (x Scope) String() string {
 }
 
 func (Scope) Descriptor() protoreflect.EnumDescriptor {
-	return file_iotics_api_common_proto_enumTypes[1].Descriptor()
+	return file_iotics_api_common_proto_enumTypes[0].Descriptor()
 }
 
 func (Scope) Type() protoreflect.EnumType {
-	return &file_iotics_api_common_proto_enumTypes[1]
+	return &file_iotics_api_common_proto_enumTypes[0]
 }
 
 func (x Scope) Number() protoreflect.EnumNumber {
@@ -129,7 +72,7 @@ func (x Scope) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Scope.Descriptor instead.
 func (Scope) EnumDescriptor() ([]byte, []int) {
-	return file_iotics_api_common_proto_rawDescGZIP(), []int{1}
+	return file_iotics_api_common_proto_rawDescGZIP(), []int{0}
 }
 
 // Limit is a request parameter to limit the number of results.
@@ -1368,19 +1311,17 @@ var file_iotics_api_common_proto_rawDesc = []byte{
 	0x4b, 0x65, 0x79, 0x12, 0x2a, 0x0a, 0x05, 0x61, 0x64, 0x64, 0x65, 0x64, 0x18, 0x04, 0x20, 0x03,
 	0x28, 0x0b, 0x32, 0x14, 0x2e, 0x69, 0x6f, 0x74, 0x69, 0x63, 0x73, 0x2e, 0x61, 0x70, 0x69, 0x2e,
 	0x50, 0x72, 0x6f, 0x70, 0x65, 0x72, 0x74, 0x79, 0x52, 0x05, 0x61, 0x64, 0x64, 0x65, 0x64, 0x2a,
-	0x25, 0x0a, 0x0a, 0x56, 0x69, 0x73, 0x69, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x12, 0x0b, 0x0a,
-	0x07, 0x50, 0x52, 0x49, 0x56, 0x41, 0x54, 0x45, 0x10, 0x00, 0x12, 0x0a, 0x0a, 0x06, 0x50, 0x55,
-	0x42, 0x4c, 0x49, 0x43, 0x10, 0x01, 0x2a, 0x1e, 0x0a, 0x05, 0x53, 0x63, 0x6f, 0x70, 0x65, 0x12,
-	0x0a, 0x0a, 0x06, 0x47, 0x4c, 0x4f, 0x42, 0x41, 0x4c, 0x10, 0x00, 0x12, 0x09, 0x0a, 0x05, 0x4c,
-	0x4f, 0x43, 0x41, 0x4c, 0x10, 0x01, 0x42, 0x7f, 0x0a, 0x0e, 0x63, 0x6f, 0x6d, 0x2e, 0x69, 0x6f,
-	0x74, 0x69, 0x63, 0x73, 0x2e, 0x61, 0x70, 0x69, 0x42, 0x0b, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e,
-	0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x3e, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e,
-	0x63, 0x6f, 0x6d, 0x2f, 0x49, 0x6f, 0x74, 0x69, 0x63, 0x2d, 0x4c, 0x61, 0x62, 0x73, 0x2f, 0x69,
-	0x6f, 0x74, 0x69, 0x63, 0x2d, 0x67, 0x6f, 0x2d, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2d, 0x71, 0x61,
-	0x70, 0x69, 0x2f, 0x69, 0x6f, 0x74, 0x69, 0x63, 0x73, 0x2f, 0x61, 0x70, 0x69, 0x3b, 0x69, 0x6f,
-	0x74, 0x69, 0x63, 0x73, 0x61, 0x70, 0x69, 0xa2, 0x02, 0x03, 0x49, 0x41, 0x58, 0xaa, 0x02, 0x0a,
-	0x49, 0x6f, 0x74, 0x69, 0x63, 0x73, 0x2e, 0x41, 0x70, 0x69, 0xca, 0x02, 0x0a, 0x49, 0x6f, 0x74,
-	0x69, 0x63, 0x73, 0x5c, 0x41, 0x70, 0x69, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x1e, 0x0a, 0x05, 0x53, 0x63, 0x6f, 0x70, 0x65, 0x12, 0x0a, 0x0a, 0x06, 0x47, 0x4c, 0x4f, 0x42,
+	0x41, 0x4c, 0x10, 0x00, 0x12, 0x09, 0x0a, 0x05, 0x4c, 0x4f, 0x43, 0x41, 0x4c, 0x10, 0x01, 0x42,
+	0x7f, 0x0a, 0x0e, 0x63, 0x6f, 0x6d, 0x2e, 0x69, 0x6f, 0x74, 0x69, 0x63, 0x73, 0x2e, 0x61, 0x70,
+	0x69, 0x42, 0x0b, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01,
+	0x5a, 0x3e, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x49, 0x6f, 0x74,
+	0x69, 0x63, 0x2d, 0x4c, 0x61, 0x62, 0x73, 0x2f, 0x69, 0x6f, 0x74, 0x69, 0x63, 0x2d, 0x67, 0x6f,
+	0x2d, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2d, 0x71, 0x61, 0x70, 0x69, 0x2f, 0x69, 0x6f, 0x74, 0x69,
+	0x63, 0x73, 0x2f, 0x61, 0x70, 0x69, 0x3b, 0x69, 0x6f, 0x74, 0x69, 0x63, 0x73, 0x61, 0x70, 0x69,
+	0xa2, 0x02, 0x03, 0x49, 0x41, 0x58, 0xaa, 0x02, 0x0a, 0x49, 0x6f, 0x74, 0x69, 0x63, 0x73, 0x2e,
+	0x41, 0x70, 0x69, 0xca, 0x02, 0x0a, 0x49, 0x6f, 0x74, 0x69, 0x63, 0x73, 0x5c, 0x41, 0x70, 0x69,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1395,46 +1336,45 @@ func file_iotics_api_common_proto_rawDescGZIP() []byte {
 	return file_iotics_api_common_proto_rawDescData
 }
 
-var file_iotics_api_common_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_iotics_api_common_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_iotics_api_common_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_iotics_api_common_proto_goTypes = []interface{}{
-	(Visibility)(0),                // 0: iotics.api.Visibility
-	(Scope)(0),                     // 1: iotics.api.Scope
-	(*Limit)(nil),                  // 2: iotics.api.Limit
-	(*Offset)(nil),                 // 3: iotics.api.Offset
-	(*Range)(nil),                  // 4: iotics.api.Range
-	(*LangLiteral)(nil),            // 5: iotics.api.LangLiteral
-	(*StringLiteral)(nil),          // 6: iotics.api.StringLiteral
-	(*Literal)(nil),                // 7: iotics.api.Literal
-	(*Uri)(nil),                    // 8: iotics.api.Uri
-	(*Property)(nil),               // 9: iotics.api.Property
-	(*GeoLocation)(nil),            // 10: iotics.api.GeoLocation
-	(*GeoCircle)(nil),              // 11: iotics.api.GeoCircle
-	(*Headers)(nil),                // 12: iotics.api.Headers
-	(*SubscriptionHeaders)(nil),    // 13: iotics.api.SubscriptionHeaders
-	(*TwinID)(nil),                 // 14: iotics.api.TwinID
-	(*Value)(nil),                  // 15: iotics.api.Value
-	(*Values)(nil),                 // 16: iotics.api.Values
-	(*FeedData)(nil),               // 17: iotics.api.FeedData
-	(*PropertyUpdate)(nil),         // 18: iotics.api.PropertyUpdate
-	(*wrapperspb.StringValue)(nil), // 19: google.protobuf.StringValue
-	(*timestamppb.Timestamp)(nil),  // 20: google.protobuf.Timestamp
+	(Scope)(0),                     // 0: iotics.api.Scope
+	(*Limit)(nil),                  // 1: iotics.api.Limit
+	(*Offset)(nil),                 // 2: iotics.api.Offset
+	(*Range)(nil),                  // 3: iotics.api.Range
+	(*LangLiteral)(nil),            // 4: iotics.api.LangLiteral
+	(*StringLiteral)(nil),          // 5: iotics.api.StringLiteral
+	(*Literal)(nil),                // 6: iotics.api.Literal
+	(*Uri)(nil),                    // 7: iotics.api.Uri
+	(*Property)(nil),               // 8: iotics.api.Property
+	(*GeoLocation)(nil),            // 9: iotics.api.GeoLocation
+	(*GeoCircle)(nil),              // 10: iotics.api.GeoCircle
+	(*Headers)(nil),                // 11: iotics.api.Headers
+	(*SubscriptionHeaders)(nil),    // 12: iotics.api.SubscriptionHeaders
+	(*TwinID)(nil),                 // 13: iotics.api.TwinID
+	(*Value)(nil),                  // 14: iotics.api.Value
+	(*Values)(nil),                 // 15: iotics.api.Values
+	(*FeedData)(nil),               // 16: iotics.api.FeedData
+	(*PropertyUpdate)(nil),         // 17: iotics.api.PropertyUpdate
+	(*wrapperspb.StringValue)(nil), // 18: google.protobuf.StringValue
+	(*timestamppb.Timestamp)(nil),  // 19: google.protobuf.Timestamp
 }
 var file_iotics_api_common_proto_depIdxs = []int32{
-	2,  // 0: iotics.api.Range.limit:type_name -> iotics.api.Limit
-	3,  // 1: iotics.api.Range.offset:type_name -> iotics.api.Offset
-	7,  // 2: iotics.api.Property.literalValue:type_name -> iotics.api.Literal
-	5,  // 3: iotics.api.Property.langLiteralValue:type_name -> iotics.api.LangLiteral
-	6,  // 4: iotics.api.Property.stringLiteralValue:type_name -> iotics.api.StringLiteral
-	8,  // 5: iotics.api.Property.uriValue:type_name -> iotics.api.Uri
-	10, // 6: iotics.api.GeoCircle.location:type_name -> iotics.api.GeoLocation
-	19, // 7: iotics.api.Headers.consumerGroup:type_name -> google.protobuf.StringValue
-	20, // 8: iotics.api.Headers.requestTimeout:type_name -> google.protobuf.Timestamp
-	19, // 9: iotics.api.SubscriptionHeaders.consumerGroup:type_name -> google.protobuf.StringValue
-	15, // 10: iotics.api.Values.added:type_name -> iotics.api.Value
-	20, // 11: iotics.api.FeedData.occurredAt:type_name -> google.protobuf.Timestamp
-	9,  // 12: iotics.api.PropertyUpdate.deleted:type_name -> iotics.api.Property
-	9,  // 13: iotics.api.PropertyUpdate.added:type_name -> iotics.api.Property
+	1,  // 0: iotics.api.Range.limit:type_name -> iotics.api.Limit
+	2,  // 1: iotics.api.Range.offset:type_name -> iotics.api.Offset
+	6,  // 2: iotics.api.Property.literalValue:type_name -> iotics.api.Literal
+	4,  // 3: iotics.api.Property.langLiteralValue:type_name -> iotics.api.LangLiteral
+	5,  // 4: iotics.api.Property.stringLiteralValue:type_name -> iotics.api.StringLiteral
+	7,  // 5: iotics.api.Property.uriValue:type_name -> iotics.api.Uri
+	9,  // 6: iotics.api.GeoCircle.location:type_name -> iotics.api.GeoLocation
+	18, // 7: iotics.api.Headers.consumerGroup:type_name -> google.protobuf.StringValue
+	19, // 8: iotics.api.Headers.requestTimeout:type_name -> google.protobuf.Timestamp
+	18, // 9: iotics.api.SubscriptionHeaders.consumerGroup:type_name -> google.protobuf.StringValue
+	14, // 10: iotics.api.Values.added:type_name -> iotics.api.Value
+	19, // 11: iotics.api.FeedData.occurredAt:type_name -> google.protobuf.Timestamp
+	8,  // 12: iotics.api.PropertyUpdate.deleted:type_name -> iotics.api.Property
+	8,  // 13: iotics.api.PropertyUpdate.added:type_name -> iotics.api.Property
 	14, // [14:14] is the sub-list for method output_type
 	14, // [14:14] is the sub-list for method input_type
 	14, // [14:14] is the sub-list for extension type_name
@@ -1664,7 +1604,7 @@ func file_iotics_api_common_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_iotics_api_common_proto_rawDesc,
-			NumEnums:      2,
+			NumEnums:      1,
 			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   0,
