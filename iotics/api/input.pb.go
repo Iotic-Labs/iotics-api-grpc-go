@@ -33,7 +33,7 @@ type InputID struct {
 
 	// Input Identifier string representation (simple string) (unique within the scope of a twin identifier's input set)
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// Twin identifier string representation (simple string) (twin to which the feed belongs)
+	// Twin identifier string representation (simple string) (twin to which the input belongs)
 	TwinId string `protobuf:"bytes,2,opt,name=twinId,proto3" json:"twinId,omitempty"`
 	// Host identifier string representation (simple string) (Host to which the twin belongs)
 	HostId string `protobuf:"bytes,3,opt,name=hostId,proto3" json:"hostId,omitempty"`
@@ -641,7 +641,7 @@ func (x *UpsertInputWithMeta) GetProperties() []*Property {
 	return nil
 }
 
-// InputMessage describe a message that can be sent to an input
+// InputMessage describes a message that can be sent to an input
 type InputMessage struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

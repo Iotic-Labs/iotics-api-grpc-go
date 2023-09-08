@@ -762,7 +762,7 @@ func (x *UpdateTwinResponse) GetPayload() *UpdateTwinResponse_Payload {
 	return nil
 }
 
-// UpsertTwinRequest describes the full state of a twin + its feeds to create or update (full update)
+// UpsertTwinRequest describes the full state of a twin + its feeds and inputs to create or update (full update)
 type UpsertTwinRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -820,7 +820,7 @@ func (x *UpsertTwinRequest) GetPayload() *UpsertTwinRequest_Payload {
 	return nil
 }
 
-// UpsertTwinResponse is received when a twin and its feeds have been created/updated.
+// UpsertTwinResponse is received when a twin and its feeds and inputs have been created/updated.
 type UpsertTwinResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1563,7 +1563,7 @@ func (x *UpdateTwinResponse_Payload) GetTwinId() *TwinID {
 	return nil
 }
 
-// UpsertTwinRequest payload. This state will be applied to the twin/feeds
+// UpsertTwinRequest payload. This state will be applied to the twin, feeds and inputs
 type UpsertTwinRequest_Payload struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
