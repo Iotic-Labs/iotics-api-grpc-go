@@ -400,7 +400,7 @@ func (x *Literal) GetValue() string {
 	return ""
 }
 
-// Uri is a metadata property type describing am Uri.
+// Uri is a metadata property type describing a Uri.
 type Uri struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

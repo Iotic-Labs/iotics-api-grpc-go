@@ -24,8 +24,8 @@ const _ = grpc.SupportPackageIsVersion7
 type TwinAPIClient interface {
 	// CreateTwin creates a twin.
 	CreateTwin(ctx context.Context, in *CreateTwinRequest, opts ...grpc.CallOption) (*CreateTwinResponse, error)
-	// UpsertTwin creates or update a twin with its metadata + the twin feeds with their metadata.
-	// The full state is applied (ie. if the operation succeeds the state of the twin/feeds will be the one
+	// UpsertTwin creates or update a twin with its metadata + the twin feeds and inputs with their metadata.
+	// The full state is applied (ie. if the operation succeeds the state of the twin, feeds and inputs will be the one
 	// described in the payload)
 	UpsertTwin(ctx context.Context, in *UpsertTwinRequest, opts ...grpc.CallOption) (*UpsertTwinResponse, error)
 	// DeleteTwin deletes a twin.
@@ -106,8 +106,8 @@ func (c *twinAPIClient) ListAllTwins(ctx context.Context, in *ListAllTwinsReques
 type TwinAPIServer interface {
 	// CreateTwin creates a twin.
 	CreateTwin(context.Context, *CreateTwinRequest) (*CreateTwinResponse, error)
-	// UpsertTwin creates or update a twin with its metadata + the twin feeds with their metadata.
-	// The full state is applied (ie. if the operation succeeds the state of the twin/feeds will be the one
+	// UpsertTwin creates or update a twin with its metadata + the twin feeds and inputs with their metadata.
+	// The full state is applied (ie. if the operation succeeds the state of the twin, feeds and inputs will be the one
 	// described in the payload)
 	UpsertTwin(context.Context, *UpsertTwinRequest) (*UpsertTwinResponse, error)
 	// DeleteTwin deletes a twin.

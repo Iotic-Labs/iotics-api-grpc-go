@@ -28,7 +28,7 @@ const (
 )
 
 // ResponseType describes the type of the search response.
-// - FULL - Returns full responses including twins and feeds identifiers, labels/comments (for all languages if no language provided), properties and location
+// - FULL - Returns full responses including twins, feeds and inputs identifiers, properties and location
 // - LOCATED - Returns located responses including twins identifier, location and label (for the provided language or default)
 // - MINIMAL - Returns minimal responses including twins identifier only
 type ResponseType int32
@@ -243,7 +243,7 @@ func (x *AdvancedSearchRequest) GetRange() *Range {
 }
 
 // SearchResponse describes a result associated to a search request.
-// It contains all the matching twins/feeds according to the request scope/range/lang/filters in the expected response type format.
+// It contains all the matching twins/feeds/inputs according to the request scope/range/lang/filters in the expected response type format.
 // In the decentralised iotics operating environment, each node in the network generates a response and the client is expected to
 // receive a stream of response messages.
 type SearchResponse struct {
