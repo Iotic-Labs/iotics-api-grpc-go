@@ -30,6 +30,8 @@ type FeedAPIClient interface {
 	UpdateFeed(ctx context.Context, in *UpdateFeedRequest, opts ...grpc.CallOption) (*UpdateFeedResponse, error)
 	// Shares a new sample of data for the given feed which any (interest) subscribers can receive.
 	ShareFeedData(ctx context.Context, in *ShareFeedDataRequest, opts ...grpc.CallOption) (*ShareFeedDataResponse, error)
+	// Shares feed data over a stream, any sharing error will return the error and close the stream
+	StreamFeedData(ctx context.Context, opts ...grpc.CallOption) (FeedAPI_StreamFeedDataClient, error)
 	// Lists all feeds owned by a twin.
 	ListAllFeeds(ctx context.Context, in *ListAllFeedsRequest, opts ...grpc.CallOption) (*ListAllFeedsResponse, error)
 	// Describes a feed. (local and remote)
@@ -80,6 +82,40 @@ func (c *feedAPIClient) ShareFeedData(ctx context.Context, in *ShareFeedDataRequ
 	return out, nil
 }
 
+func (c *feedAPIClient) StreamFeedData(ctx context.Context, opts ...grpc.CallOption) (FeedAPI_StreamFeedDataClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FeedAPI_ServiceDesc.Streams[0], "/iotics.api.FeedAPI/StreamFeedData", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &feedAPIStreamFeedDataClient{stream}
+	return x, nil
+}
+
+type FeedAPI_StreamFeedDataClient interface {
+	Send(*ShareFeedDataRequest) error
+	CloseAndRecv() (*ShareFeedDataResponse, error)
+	grpc.ClientStream
+}
+
+type feedAPIStreamFeedDataClient struct {
+	grpc.ClientStream
+}
+
+func (x *feedAPIStreamFeedDataClient) Send(m *ShareFeedDataRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *feedAPIStreamFeedDataClient) CloseAndRecv() (*ShareFeedDataResponse, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(ShareFeedDataResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *feedAPIClient) ListAllFeeds(ctx context.Context, in *ListAllFeedsRequest, opts ...grpc.CallOption) (*ListAllFeedsResponse, error) {
 	out := new(ListAllFeedsResponse)
 	err := c.cc.Invoke(ctx, "/iotics.api.FeedAPI/ListAllFeeds", in, out, opts...)
@@ -110,6 +146,8 @@ type FeedAPIServer interface {
 	UpdateFeed(context.Context, *UpdateFeedRequest) (*UpdateFeedResponse, error)
 	// Shares a new sample of data for the given feed which any (interest) subscribers can receive.
 	ShareFeedData(context.Context, *ShareFeedDataRequest) (*ShareFeedDataResponse, error)
+	// Shares feed data over a stream, any sharing error will return the error and close the stream
+	StreamFeedData(FeedAPI_StreamFeedDataServer) error
 	// Lists all feeds owned by a twin.
 	ListAllFeeds(context.Context, *ListAllFeedsRequest) (*ListAllFeedsResponse, error)
 	// Describes a feed. (local and remote)
@@ -131,6 +169,9 @@ func (UnimplementedFeedAPIServer) UpdateFeed(context.Context, *UpdateFeedRequest
 }
 func (UnimplementedFeedAPIServer) ShareFeedData(context.Context, *ShareFeedDataRequest) (*ShareFeedDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ShareFeedData not implemented")
+}
+func (UnimplementedFeedAPIServer) StreamFeedData(FeedAPI_StreamFeedDataServer) error {
+	return status.Errorf(codes.Unimplemented, "method StreamFeedData not implemented")
 }
 func (UnimplementedFeedAPIServer) ListAllFeeds(context.Context, *ListAllFeedsRequest) (*ListAllFeedsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListAllFeeds not implemented")
@@ -222,6 +263,32 @@ func _FeedAPI_ShareFeedData_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FeedAPI_StreamFeedData_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(FeedAPIServer).StreamFeedData(&feedAPIStreamFeedDataServer{stream})
+}
+
+type FeedAPI_StreamFeedDataServer interface {
+	SendAndClose(*ShareFeedDataResponse) error
+	Recv() (*ShareFeedDataRequest, error)
+	grpc.ServerStream
+}
+
+type feedAPIStreamFeedDataServer struct {
+	grpc.ServerStream
+}
+
+func (x *feedAPIStreamFeedDataServer) SendAndClose(m *ShareFeedDataResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *feedAPIStreamFeedDataServer) Recv() (*ShareFeedDataRequest, error) {
+	m := new(ShareFeedDataRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func _FeedAPI_ListAllFeeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListAllFeedsRequest)
 	if err := dec(in); err != nil {
@@ -290,6 +357,12 @@ var FeedAPI_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _FeedAPI_DescribeFeed_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "StreamFeedData",
+			Handler:       _FeedAPI_StreamFeedData_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "iotics/api/feed.proto",
 }
