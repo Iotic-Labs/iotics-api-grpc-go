@@ -30,7 +30,8 @@ type FeedAPIClient interface {
 	UpdateFeed(ctx context.Context, in *UpdateFeedRequest, opts ...grpc.CallOption) (*UpdateFeedResponse, error)
 	// Shares a new sample of data for the given feed which any (interest) subscribers can receive.
 	ShareFeedData(ctx context.Context, in *ShareFeedDataRequest, opts ...grpc.CallOption) (*ShareFeedDataResponse, error)
-	// Shares feed data over a stream, any sharing error will return the error and close the stream
+	// Shares feed data over a stream, any sharing error will return the error and close the stream.
+	// Note: cannot share to different feeds over the same stream.
 	StreamFeedData(ctx context.Context, opts ...grpc.CallOption) (FeedAPI_StreamFeedDataClient, error)
 	// Lists all feeds owned by a twin.
 	ListAllFeeds(ctx context.Context, in *ListAllFeedsRequest, opts ...grpc.CallOption) (*ListAllFeedsResponse, error)
@@ -146,7 +147,8 @@ type FeedAPIServer interface {
 	UpdateFeed(context.Context, *UpdateFeedRequest) (*UpdateFeedResponse, error)
 	// Shares a new sample of data for the given feed which any (interest) subscribers can receive.
 	ShareFeedData(context.Context, *ShareFeedDataRequest) (*ShareFeedDataResponse, error)
-	// Shares feed data over a stream, any sharing error will return the error and close the stream
+	// Shares feed data over a stream, any sharing error will return the error and close the stream.
+	// Note: cannot share to different feeds over the same stream.
 	StreamFeedData(FeedAPI_StreamFeedDataServer) error
 	// Lists all feeds owned by a twin.
 	ListAllFeeds(context.Context, *ListAllFeedsRequest) (*ListAllFeedsResponse, error)
