@@ -22,12 +22,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MetaAPIClient interface {
-	// SparqlQuery performs a SPARQL 1.1 query and returns one or more results, each as a sequence of chunks. Note that:
-	//   - Chunks for a particular result will arrive in-order though they might be interleaved with chunks from other
-	//     results (when performing a non-local query). See scope parameter in SparqlQueryRequest;
-	//   - The call will only complete once the (specified or host default) request timeout has been reached. The client can
-	//     choose to end the stream early once they have received enough results. (E.g. in the case of Scope.LOCAL this
-	//     would be after the one and only sequence of chunks has been received.). (local and remote)
+	// SparqlQuery performs a SPARQL 1.1 query against the Federated Knowledge Graph of the Iotics network to which this
+	// host belongs. The result is returned as a sequence of chunks. Note that:
+	// - Result chunks MIGHT arrive out of order and it is the client's responsibility to re-assemble them.
+	// - This RPC is currently in alpha!
 	SparqlQuery(ctx context.Context, in *SparqlQueryRequest, opts ...grpc.CallOption) (MetaAPI_SparqlQueryClient, error)
 	// SparqlUpdate performs a SPARQL 1.1 update. When performing an update, the update query must contain a reference to
 	// one of the following graph IRIs:
@@ -103,7 +101,7 @@ func (c *metaAPIClient) ExplorerQuery(ctx context.Context, in *ExplorerRequest, 
 }
 
 type MetaAPI_ExplorerQueryClient interface {
-	Recv() (*SparqlQueryResponse, error)
+	Recv() (*ExplorerQueryResponse, error)
 	grpc.ClientStream
 }
 
@@ -111,8 +109,8 @@ type metaAPIExplorerQueryClient struct {
 	grpc.ClientStream
 }
 
-func (x *metaAPIExplorerQueryClient) Recv() (*SparqlQueryResponse, error) {
-	m := new(SparqlQueryResponse)
+func (x *metaAPIExplorerQueryClient) Recv() (*ExplorerQueryResponse, error) {
+	m := new(ExplorerQueryResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -123,12 +121,10 @@ func (x *metaAPIExplorerQueryClient) Recv() (*SparqlQueryResponse, error) {
 // All implementations should embed UnimplementedMetaAPIServer
 // for forward compatibility
 type MetaAPIServer interface {
-	// SparqlQuery performs a SPARQL 1.1 query and returns one or more results, each as a sequence of chunks. Note that:
-	//   - Chunks for a particular result will arrive in-order though they might be interleaved with chunks from other
-	//     results (when performing a non-local query). See scope parameter in SparqlQueryRequest;
-	//   - The call will only complete once the (specified or host default) request timeout has been reached. The client can
-	//     choose to end the stream early once they have received enough results. (E.g. in the case of Scope.LOCAL this
-	//     would be after the one and only sequence of chunks has been received.). (local and remote)
+	// SparqlQuery performs a SPARQL 1.1 query against the Federated Knowledge Graph of the Iotics network to which this
+	// host belongs. The result is returned as a sequence of chunks. Note that:
+	// - Result chunks MIGHT arrive out of order and it is the client's responsibility to re-assemble them.
+	// - This RPC is currently in alpha!
 	SparqlQuery(*SparqlQueryRequest, MetaAPI_SparqlQueryServer) error
 	// SparqlUpdate performs a SPARQL 1.1 update. When performing an update, the update query must contain a reference to
 	// one of the following graph IRIs:
@@ -212,7 +208,7 @@ func _MetaAPI_ExplorerQuery_Handler(srv interface{}, stream grpc.ServerStream) e
 }
 
 type MetaAPI_ExplorerQueryServer interface {
-	Send(*SparqlQueryResponse) error
+	Send(*ExplorerQueryResponse) error
 	grpc.ServerStream
 }
 
@@ -220,7 +216,7 @@ type metaAPIExplorerQueryServer struct {
 	grpc.ServerStream
 }
 
-func (x *metaAPIExplorerQueryServer) Send(m *SparqlQueryResponse) error {
+func (x *metaAPIExplorerQueryServer) Send(m *ExplorerQueryResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
