@@ -101,7 +101,7 @@ func (c *metaAPIClient) ExplorerQuery(ctx context.Context, in *ExplorerRequest, 
 }
 
 type MetaAPI_ExplorerQueryClient interface {
-	Recv() (*ExplorerQueryResponse, error)
+	Recv() (*ExplorerResponse, error)
 	grpc.ClientStream
 }
 
@@ -109,8 +109,8 @@ type metaAPIExplorerQueryClient struct {
 	grpc.ClientStream
 }
 
-func (x *metaAPIExplorerQueryClient) Recv() (*ExplorerQueryResponse, error) {
-	m := new(ExplorerQueryResponse)
+func (x *metaAPIExplorerQueryClient) Recv() (*ExplorerResponse, error) {
+	m := new(ExplorerResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -208,7 +208,7 @@ func _MetaAPI_ExplorerQuery_Handler(srv interface{}, stream grpc.ServerStream) e
 }
 
 type MetaAPI_ExplorerQueryServer interface {
-	Send(*ExplorerQueryResponse) error
+	Send(*ExplorerResponse) error
 	grpc.ServerStream
 }
 
@@ -216,7 +216,7 @@ type metaAPIExplorerQueryServer struct {
 	grpc.ServerStream
 }
 
-func (x *metaAPIExplorerQueryServer) Send(m *ExplorerQueryResponse) error {
+func (x *metaAPIExplorerQueryServer) Send(m *ExplorerResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
