@@ -25,15 +25,16 @@ type MetaAPIClient interface {
 	// SparqlQuery performs a SPARQL 1.1 query against the Federated Knowledge Graph of the Iotics network to which this
 	// host belongs. The result is returned as a sequence of chunks. Note that:
 	// - Result chunks MIGHT arrive out of order and it is the client's responsibility to re-assemble them.
-	// - This RPC is currently in alpha!
+	// - This RPC is currently in beta, it means:
+	//   - the logic should remain unchanged,
+	//   - the rpc call should remain unchanged,
+	//   - the service can be interrupted without notice.
 	SparqlQuery(ctx context.Context, in *SparqlQueryRequest, opts ...grpc.CallOption) (MetaAPI_SparqlQueryClient, error)
 	// SparqlUpdate performs a SPARQL 1.1 update. When performing an update, the update query must contain a reference to
 	// one of the following graph IRIs:
 	//  1. http://data.iotics.com/graph#custom-public (aka custom public graph) - All metadata written to this graph will be
 	//     visible during SPARQL queries both with local & global scope (and thus, the Iotics network).
 	SparqlUpdate(ctx context.Context, in *SparqlUpdateRequest, opts ...grpc.CallOption) (*SparqlUpdateResponse, error)
-	// ExplorerQuery - Deprecated - use SparqlQuery instead.
-	ExplorerQuery(ctx context.Context, in *ExplorerRequest, opts ...grpc.CallOption) (MetaAPI_ExplorerQueryClient, error)
 }
 
 type metaAPIClient struct {
@@ -85,38 +86,6 @@ func (c *metaAPIClient) SparqlUpdate(ctx context.Context, in *SparqlUpdateReques
 	return out, nil
 }
 
-func (c *metaAPIClient) ExplorerQuery(ctx context.Context, in *ExplorerRequest, opts ...grpc.CallOption) (MetaAPI_ExplorerQueryClient, error) {
-	stream, err := c.cc.NewStream(ctx, &MetaAPI_ServiceDesc.Streams[1], "/iotics.api.MetaAPI/ExplorerQuery", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &metaAPIExplorerQueryClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type MetaAPI_ExplorerQueryClient interface {
-	Recv() (*ExplorerResponse, error)
-	grpc.ClientStream
-}
-
-type metaAPIExplorerQueryClient struct {
-	grpc.ClientStream
-}
-
-func (x *metaAPIExplorerQueryClient) Recv() (*ExplorerResponse, error) {
-	m := new(ExplorerResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 // MetaAPIServer is the server API for MetaAPI service.
 // All implementations should embed UnimplementedMetaAPIServer
 // for forward compatibility
@@ -124,15 +93,16 @@ type MetaAPIServer interface {
 	// SparqlQuery performs a SPARQL 1.1 query against the Federated Knowledge Graph of the Iotics network to which this
 	// host belongs. The result is returned as a sequence of chunks. Note that:
 	// - Result chunks MIGHT arrive out of order and it is the client's responsibility to re-assemble them.
-	// - This RPC is currently in alpha!
+	// - This RPC is currently in beta, it means:
+	//   - the logic should remain unchanged,
+	//   - the rpc call should remain unchanged,
+	//   - the service can be interrupted without notice.
 	SparqlQuery(*SparqlQueryRequest, MetaAPI_SparqlQueryServer) error
 	// SparqlUpdate performs a SPARQL 1.1 update. When performing an update, the update query must contain a reference to
 	// one of the following graph IRIs:
 	//  1. http://data.iotics.com/graph#custom-public (aka custom public graph) - All metadata written to this graph will be
 	//     visible during SPARQL queries both with local & global scope (and thus, the Iotics network).
 	SparqlUpdate(context.Context, *SparqlUpdateRequest) (*SparqlUpdateResponse, error)
-	// ExplorerQuery - Deprecated - use SparqlQuery instead.
-	ExplorerQuery(*ExplorerRequest, MetaAPI_ExplorerQueryServer) error
 }
 
 // UnimplementedMetaAPIServer should be embedded to have forward compatible implementations.
@@ -144,9 +114,6 @@ func (UnimplementedMetaAPIServer) SparqlQuery(*SparqlQueryRequest, MetaAPI_Sparq
 }
 func (UnimplementedMetaAPIServer) SparqlUpdate(context.Context, *SparqlUpdateRequest) (*SparqlUpdateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SparqlUpdate not implemented")
-}
-func (UnimplementedMetaAPIServer) ExplorerQuery(*ExplorerRequest, MetaAPI_ExplorerQueryServer) error {
-	return status.Errorf(codes.Unimplemented, "method ExplorerQuery not implemented")
 }
 
 // UnsafeMetaAPIServer may be embedded to opt out of forward compatibility for this service.
@@ -199,27 +166,6 @@ func _MetaAPI_SparqlUpdate_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MetaAPI_ExplorerQuery_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(ExplorerRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(MetaAPIServer).ExplorerQuery(m, &metaAPIExplorerQueryServer{stream})
-}
-
-type MetaAPI_ExplorerQueryServer interface {
-	Send(*ExplorerResponse) error
-	grpc.ServerStream
-}
-
-type metaAPIExplorerQueryServer struct {
-	grpc.ServerStream
-}
-
-func (x *metaAPIExplorerQueryServer) Send(m *ExplorerResponse) error {
-	return x.ServerStream.SendMsg(m)
-}
-
 // MetaAPI_ServiceDesc is the grpc.ServiceDesc for MetaAPI service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -236,11 +182,6 @@ var MetaAPI_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "SparqlQuery",
 			Handler:       _MetaAPI_SparqlQuery_Handler,
-			ServerStreams: true,
-		},
-		{
-			StreamName:    "ExplorerQuery",
-			Handler:       _MetaAPI_ExplorerQuery_Handler,
 			ServerStreams: true,
 		},
 	},
