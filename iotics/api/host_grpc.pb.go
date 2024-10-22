@@ -24,12 +24,6 @@ const _ = grpc.SupportPackageIsVersion7
 type HostAPIClient interface {
 	// GetHostID gets the ID of the host twin.
 	GetHostID(ctx context.Context, in *GetHostIDRequest, opts ...grpc.CallOption) (*GetHostIDResponse, error)
-	// IsHostDataAllowed determines whether a remote host is allowed to perform data requests against the given twin.
-	// An example of a data request is interest.SendInputMessage
-	IsHostDataAllowed(ctx context.Context, in *IsHostDataAllowedRequest, opts ...grpc.CallOption) (*IsHostDataAllowedResponse, error)
-	// IsHostMetaAllowed determines whether a remote host is allowed to perform meta requests against the given twin.
-	// An example of a meta(data) request is twin.DescribeTwin
-	IsHostMetaAllowed(ctx context.Context, in *IsHostMetaAllowedRequest, opts ...grpc.CallOption) (*IsHostMetaAllowedResponse, error)
 }
 
 type hostAPIClient struct {
@@ -49,36 +43,12 @@ func (c *hostAPIClient) GetHostID(ctx context.Context, in *GetHostIDRequest, opt
 	return out, nil
 }
 
-func (c *hostAPIClient) IsHostDataAllowed(ctx context.Context, in *IsHostDataAllowedRequest, opts ...grpc.CallOption) (*IsHostDataAllowedResponse, error) {
-	out := new(IsHostDataAllowedResponse)
-	err := c.cc.Invoke(ctx, "/iotics.api.HostAPI/IsHostDataAllowed", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hostAPIClient) IsHostMetaAllowed(ctx context.Context, in *IsHostMetaAllowedRequest, opts ...grpc.CallOption) (*IsHostMetaAllowedResponse, error) {
-	out := new(IsHostMetaAllowedResponse)
-	err := c.cc.Invoke(ctx, "/iotics.api.HostAPI/IsHostMetaAllowed", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // HostAPIServer is the server API for HostAPI service.
 // All implementations should embed UnimplementedHostAPIServer
 // for forward compatibility
 type HostAPIServer interface {
 	// GetHostID gets the ID of the host twin.
 	GetHostID(context.Context, *GetHostIDRequest) (*GetHostIDResponse, error)
-	// IsHostDataAllowed determines whether a remote host is allowed to perform data requests against the given twin.
-	// An example of a data request is interest.SendInputMessage
-	IsHostDataAllowed(context.Context, *IsHostDataAllowedRequest) (*IsHostDataAllowedResponse, error)
-	// IsHostMetaAllowed determines whether a remote host is allowed to perform meta requests against the given twin.
-	// An example of a meta(data) request is twin.DescribeTwin
-	IsHostMetaAllowed(context.Context, *IsHostMetaAllowedRequest) (*IsHostMetaAllowedResponse, error)
 }
 
 // UnimplementedHostAPIServer should be embedded to have forward compatible implementations.
@@ -87,12 +57,6 @@ type UnimplementedHostAPIServer struct {
 
 func (UnimplementedHostAPIServer) GetHostID(context.Context, *GetHostIDRequest) (*GetHostIDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHostID not implemented")
-}
-func (UnimplementedHostAPIServer) IsHostDataAllowed(context.Context, *IsHostDataAllowedRequest) (*IsHostDataAllowedResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method IsHostDataAllowed not implemented")
-}
-func (UnimplementedHostAPIServer) IsHostMetaAllowed(context.Context, *IsHostMetaAllowedRequest) (*IsHostMetaAllowedResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method IsHostMetaAllowed not implemented")
 }
 
 // UnsafeHostAPIServer may be embedded to opt out of forward compatibility for this service.
@@ -124,42 +88,6 @@ func _HostAPI_GetHostID_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HostAPI_IsHostDataAllowed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IsHostDataAllowedRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HostAPIServer).IsHostDataAllowed(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/iotics.api.HostAPI/IsHostDataAllowed",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostAPIServer).IsHostDataAllowed(ctx, req.(*IsHostDataAllowedRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HostAPI_IsHostMetaAllowed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IsHostMetaAllowedRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HostAPIServer).IsHostMetaAllowed(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/iotics.api.HostAPI/IsHostMetaAllowed",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostAPIServer).IsHostMetaAllowed(ctx, req.(*IsHostMetaAllowedRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // HostAPI_ServiceDesc is the grpc.ServiceDesc for HostAPI service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,14 +98,6 @@ var HostAPI_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetHostID",
 			Handler:    _HostAPI_GetHostID_Handler,
-		},
-		{
-			MethodName: "IsHostDataAllowed",
-			Handler:    _HostAPI_IsHostDataAllowed_Handler,
-		},
-		{
-			MethodName: "IsHostMetaAllowed",
-			Handler:    _HostAPI_IsHostMetaAllowed_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
