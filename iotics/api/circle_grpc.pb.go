@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CircleAPIClient interface {
-	// UpsertCircle creates or update a circle with its metadata.
+	// UpsertCircle creates or updates a circle with its metadata.
 	// The full state is applied (ie. if the operation succeeds the state of the circle will
 	// be the one described in the payload)
 	UpsertCircle(ctx context.Context, in *UpsertCircleRequest, opts ...grpc.CallOption) (*UpsertCircleResponse, error)
@@ -82,7 +82,7 @@ func (c *circleAPIClient) ListAllCircles(ctx context.Context, in *ListAllCircles
 // All implementations should embed UnimplementedCircleAPIServer
 // for forward compatibility
 type CircleAPIServer interface {
-	// UpsertCircle creates or update a circle with its metadata.
+	// UpsertCircle creates or updates a circle with its metadata.
 	// The full state is applied (ie. if the operation succeeds the state of the circle will
 	// be the one described in the payload)
 	UpsertCircle(context.Context, *UpsertCircleRequest) (*UpsertCircleResponse, error)
